@@ -1,5 +1,5 @@
 import { buildApiUrl } from '../../../config/api'
-import type { JobFilters, JobsResponse } from '../types/job'
+import type { JobDetail, JobFilters, JobsResponse } from '../types/job'
 
 function getErrorMessage(message: unknown): string {
   if (Array.isArray(message)) {
@@ -46,4 +46,24 @@ export async function getJobs(
   }
 
   return body as JobsResponse
+}
+
+export async function getJobById(jobId: string): Promise<JobDetail> {
+  const token = localStorage.getItem('token')
+  const response = await fetch(buildApiUrl(`/jobs/${jobId}`), {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  })
+  const contentType = response.headers.get('content-type') || ''
+
+  if (!contentType.includes('application/json')) {
+    throw new Error('Response API bukan JSON.')
+  }
+
+  const body = await response.json()
+
+  if (!response.ok) {
+    throw new Error(getErrorMessage(body.message))
+  }
+
+  return body as JobDetail
 }

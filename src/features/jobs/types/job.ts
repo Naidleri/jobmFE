@@ -10,6 +10,13 @@ export type Job = {
   hasApplied: boolean
 }
 
+export type JobDetail = Job & {
+  description: string
+  requirements: string[]
+  status: string
+  postedAt?: string
+}
+
 export type JobsResponse = {
   data: Job[]
   total: number

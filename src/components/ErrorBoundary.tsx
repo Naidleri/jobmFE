@@ -31,10 +31,10 @@ export default class ErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <main className="error-boundary">
+        <main className="grid min-h-full place-content-center justify-items-center p-8 text-center text-[#15213f]">
           <h1>Something went wrong</h1>
-          <p>Halaman tidak dapat ditampilkan. Silakan coba lagi.</p>
-          <button type="button" onClick={this.reloadPage}>
+          <p className="text-[#66718a]">Halaman tidak dapat ditampilkan. Silakan coba lagi.</p>
+          <button className="min-h-[42px] rounded-[10px] bg-[#101c40] px-[18px] font-semibold text-white" type="button" onClick={this.reloadPage}>
             Coba lagi
           </button>
         </main>

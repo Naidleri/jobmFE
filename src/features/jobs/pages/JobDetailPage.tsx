@@ -1,0 +1,96 @@
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Button } from '../../../components'
+import { getJobById } from '../services/jobs.service'
+import type { JobDetail } from '../types/job'
+
+function formatDate(date?: string) {
+  if (!date) return '-'
+  return new Date(date).toLocaleDateString('id-ID')
+}
+
+function JobDetailPage() {
+  const { jobId } = useParams()
+  const navigate = useNavigate()
+  const [job, setJob] = useState<JobDetail | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const requestedJobId = jobId ?? ''
+
+  useEffect(() => {
+    if (!requestedJobId) return
+
+    let active = true
+
+    async function loadJob() {
+      try {
+        const result = await getJobById(requestedJobId)
+        if (active) setJob(result)
+      } catch (requestError) {
+        if (active) {
+          setError(
+            requestError instanceof Error
+              ? requestError.message
+              : 'Gagal mengambil detail job',
+          )
+        }
+      } finally {
+        if (active) setLoading(false)
+      }
+    }
+
+    void loadJob()
+
+    return () => {
+      active = false
+    }
+  }, [requestedJobId])
+
+  if (!jobId) return <p role="alert">Job tidak ditemukan.</p>
+  if (loading) return <p>Loading job detail...</p>
+  if (error) return <p role="alert">{error}</p>
+  if (!job) return <p>Job tidak ditemukan.</p>
+
+  return (
+    <section className="mx-auto max-w-[1000px]">
+      <Button.Root variant="ghost" onClick={() => navigate(-1)}>
+        ← Back
+      </Button.Root>
+
+      <div className="my-7 flex items-start justify-between gap-6 max-sm:flex-col">
+        <div>
+          <p className="mb-1.5 text-sm font-bold uppercase text-[#66718a]">Job detail</p>
+          <h1 className="m-0 text-[#15213f]">{job.title}</h1>
+          <p className="mt-2.5 text-[#66718a]">
+            {job.company} · Posted {formatDate(job.postedAt)}
+          </p>
+        </div>
+        <Button.Root variant="primary" className="max-sm:w-full">Apply</Button.Root>
+      </div>
+
+      <div className="grid grid-cols-[minmax(0,1fr)_280px] gap-6 max-sm:flex max-sm:flex-col">
+        <div className="rounded-2xl border border-[#e4e7ed] bg-white p-6">
+          <h2 className="m-0 mb-3 text-lg text-[#15213f]">Description</h2>
+          <p className="leading-7 text-[#45516c]">{job.description}</p>
+
+          <h2 className="mt-7 mb-3 text-lg text-[#15213f]">Requirement</h2>
+          <ul className="text-[#45516c] leading-7">
+            {job.requirements.map((requirement) => (
+              <li key={requirement}>{requirement}</li>
+            ))}
+          </ul>
+        </div>
+
+        <aside className="rounded-2xl border border-[#e4e7ed] bg-white p-6">
+          <h2 className="m-0 mb-3 text-lg text-[#15213f]">Job detail</h2>
+          <p className="mt-[18px] grid gap-1 text-[#45516c]"><strong className="text-[13px] text-[#66718a]">Location</strong>{job.location}</p>
+          <p className="mt-[18px] grid gap-1 text-[#45516c]"><strong className="text-[13px] text-[#66718a]">Job type</strong>{job.jobType.replace('_', '-')}</p>
+          <p className="mt-[18px] grid gap-1 text-[#45516c]"><strong className="text-[13px] text-[#66718a]">Status</strong>{job.status}</p>
+          <p className="mt-[18px] grid gap-1 text-[#45516c]"><strong className="text-[13px] text-[#66718a]">Salary</strong>{job.salaryMin.toLocaleString('id-ID')} - {job.salaryMax.toLocaleString('id-ID')} {job.currency}</p>
+        </aside>
+      </div>
+    </section>
+  )
+}
+
+export default JobDetailPage

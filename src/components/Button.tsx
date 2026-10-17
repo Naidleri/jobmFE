@@ -14,7 +14,13 @@ function Root({
 }: ButtonRootProps) {
   return (
     <button
-      className={`button button--${variant} ${className}`.trim()}
+      className={`inline-flex min-h-[42px] items-center justify-center gap-2 rounded-[10px] px-4 font-semibold ${
+        variant === 'primary'
+          ? 'bg-[#101c40] text-white'
+          : variant === 'secondary'
+            ? 'border border-[#dfe2e8] bg-white text-[#15213f]'
+            : 'bg-transparent text-[#45516c]'
+      } ${className}`.trim()}
       onClick={onClick}
     >
       {children}
@@ -23,7 +29,7 @@ function Root({
 }
 
 function Icon({ children }: PropsWithChildren) {
-  return <span className="button__icon" aria-hidden="true">{children}</span>
+  return <span className="inline-flex" aria-hidden="true">{children}</span>
 }
 
 export const Button = {

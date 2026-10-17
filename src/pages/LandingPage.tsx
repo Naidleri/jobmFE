@@ -31,9 +31,9 @@ function JobsContent() {
   }
 
   return (
-    <section className="jobs-fragment" aria-labelledby="jobs-title">
+    <section className="mx-auto max-w-[900px]" aria-labelledby="jobs-title">
 
-      <div className="jobs-fragment__toolbar">
+      <div className="mb-6 flex items-start justify-between gap-5 rounded-[14px] border border-[#e4e7ed] bg-[#f8f9fb] p-4 max-sm:flex-col">
         <Search.Root>
           <Search.Input
             placeholder="Search jobs..."
@@ -42,7 +42,7 @@ function JobsContent() {
           />
         </Search.Root>
 
-        <Filter.Root>
+        <Filter.Root className="shrink-0">
           <Filter.Trigger>Filter</Filter.Trigger>
           <Filter.Content>
             <Filter.Select
@@ -68,7 +68,7 @@ function JobsContent() {
       {loading && <p>Loading jobs...</p>}
       {error && <p role="alert">{error}</p>}
       {!loading && !error && jobs.length === 0 && <p>Job tidak ditemukan.</p>}
-      <div className="jobs-list">
+      <div className="grid gap-4">
         {jobs.map((job) => (
           <JobCard key={job.id} job={job} />
         ))}

@@ -12,25 +12,25 @@ type FilterSelectProps = PropsWithChildren<{
 }>
 
 function Root({ children, className = '' }: FilterRootProps) {
-  return <div className={`filter ${className}`.trim()}>{children}</div>
+  return <div className={`flex flex-col gap-3 ${className}`.trim()}>{children}</div>
 }
 
 function Trigger({ children = 'Filter' }: PropsWithChildren) {
   return (
-    <button type="button" className="filter__trigger">
+    <button type="button" className="min-h-[42px] rounded-[10px] border border-[#dfe2e8] bg-white px-4 font-semibold text-[#15213f]">
       {children}
     </button>
   )
 }
 
 function Content({ children }: PropsWithChildren) {
-  return <div className="filter__content">{children}</div>
+  return <div className="flex flex-wrap gap-3">{children}</div>
 }
 
 function Select({ children, value = '', onChange }: FilterSelectProps) {
   return (
     <select
-      className="filter__select"
+      className="min-h-[42px] rounded-[10px] border border-[#dfe2e8] bg-white px-3 font-inherit text-[#15213f]"
       value={value}
       onChange={(event) => onChange?.(event.target.value)}
     >
