@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button } from '../../../components'
+import { Button, ModalNotAuth } from '../../../components'
 import { getJobById } from '../services/jobs.service'
 import type { JobDetail } from '../types/job'
 
@@ -15,7 +15,18 @@ function JobDetailPage() {
   const [job, setJob] = useState<JobDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showLoginModal, setShowLoginModal] = useState(false)
   const requestedJobId = jobId ?? ''
+
+  function handleApply() {
+    const token = localStorage.getItem('token')
+
+    if (!token) {
+      setShowLoginModal(true)
+      return
+    }
+
+  }
 
   useEffect(() => {
     if (!requestedJobId) return
@@ -65,7 +76,13 @@ function JobDetailPage() {
             {job.company} · Posted {formatDate(job.postedAt)}
           </p>
         </div>
-        <Button.Root variant="primary" className="max-sm:w-full">Apply</Button.Root>
+        <Button.Root
+          variant="primary"
+          className="max-sm:w-full"
+          onClick={handleApply}
+        >
+          Apply
+        </Button.Root>
       </div>
 
       <div className="grid grid-cols-[minmax(0,1fr)_280px] gap-6 max-sm:flex max-sm:flex-col">
@@ -89,6 +106,9 @@ function JobDetailPage() {
           <p className="mt-[18px] grid gap-1 text-[#45516c]"><strong className="text-[13px] text-[#66718a]">Salary</strong>{job.salaryMin.toLocaleString('id-ID')} - {job.salaryMax.toLocaleString('id-ID')} {job.currency}</p>
         </aside>
       </div>
+      {showLoginModal && (
+        <ModalNotAuth onClose={() => setShowLoginModal(false)} />
+      )}
     </section>
   )
 }
