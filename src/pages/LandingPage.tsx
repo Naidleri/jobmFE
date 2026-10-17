@@ -1,18 +1,24 @@
+import { useEffect, useState } from 'react'
 import { Filter, Search } from '../components'
 import JobCard from '../features/jobs/components/JobCard'
 import { JobsProvider } from '../features/jobs/context/JobsContext'
 import { useJobs } from '../features/jobs/context/useJobs'
+import { useDebounce } from '../hooks/useDebounce'
 
 function JobsContent() {
   const { jobs, filters, loading, error, setFilters } = useJobs()
+  const [keyword, setKeyword] = useState(filters.keyword)
+  const debouncedKeyword = useDebounce(keyword)
 
-  function updateKeyword(keyword: string) {
+  useEffect(() => {
+    if (debouncedKeyword === filters.keyword) return
+
     setFilters({
-      keyword,
+      keyword: debouncedKeyword,
       location: filters.location,
       jobType: filters.jobType,
     })
-  }
+  }, [debouncedKeyword, filters, setFilters])
 
   function updateLocation(location: string) {
     setFilters({
@@ -37,8 +43,8 @@ function JobsContent() {
         <Search.Root>
           <Search.Input
             placeholder="Search jobs..."
-            value={filters.keyword}
-            onChange={updateKeyword}
+            value={keyword}
+            onChange={setKeyword}
           />
         </Search.Root>
 

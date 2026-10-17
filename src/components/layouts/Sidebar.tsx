@@ -1,19 +1,5 @@
-import { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import type { AuthUser } from '../../features/auth/types/auth'
-
-function getStoredUser() {
-    const token = localStorage.getItem('access_token')
-    const savedUser = localStorage.getItem('user')
-
-    if (!token || !savedUser) return null
-
-    try {
-        return JSON.parse(savedUser) as AuthUser
-    } catch {
-        return null
-    }
-}
+import { useAuth } from '../../hooks/useAuth'
 
 function HomeIcon() {
     return (
@@ -34,21 +20,7 @@ function ProfileIcon() {
 
 export default function Sidebar() {
     const navigate = useNavigate()
-    const [user, setUser] = useState<AuthUser | null>(getStoredUser)
-
-    useEffect(() => {
-        function updateUser() {
-            setUser(getStoredUser())
-        }
-
-        window.addEventListener('auth-changed', updateUser)
-        window.addEventListener('storage', updateUser)
-
-        return () => {
-            window.removeEventListener('auth-changed', updateUser)
-            window.removeEventListener('storage', updateUser)
-        }
-    }, [])
+    const { user } = useAuth()
 
     const isGuest = !user
     const displayName = user?.name ?? 'Guest'

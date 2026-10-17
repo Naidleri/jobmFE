@@ -6,6 +6,7 @@ import LandingPage from './pages/LandingPage'
 import JobDetailPage from './features/jobs/pages/JobDetailPage'
 import LoginPage from './features/auth/pages/LoginPage'
 import RegisterPage from './features/auth/pages/RegisterPage'
+import MyProfilePage from './pages/MyProfilePage'
 
 function App() {
   const [toast, setToast] = useState<ToastEventDetail | null>(null)
@@ -35,7 +36,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/jobs/:jobId" element={<JobDetailPage />} />
-          <Route path="/profile" element={<h1>My Profile</h1>} />
+          <Route path="/profile" element={<MyProfilePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Routes>

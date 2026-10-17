@@ -3,11 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Button, ModalNotAuth } from '../../../components'
 import { getJobById } from '../services/jobs.service'
 import type { JobDetail } from '../types/job'
-
-function formatDate(date?: string) {
-  if (!date) return '-'
-  return new Date(date).toLocaleDateString('id-ID')
-}
+import { formatDate } from '../../../utils/date'
 
 function JobDetailPage() {
   const { jobId } = useParams()
