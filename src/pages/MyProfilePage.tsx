@@ -105,13 +105,6 @@ function MyProfilePage() {
                   {application.status}
                 </span>
               </div>
-              <button
-                type="button"
-                className="mt-4 text-sm font-bold text-[#15213f] underline"
-                onClick={() => toggleHistory(application.applicationId)}
-              >
-                {history[application.applicationId] ? 'Hide history' : 'View history'}
-              </button>
               {history[application.applicationId] && (
                 <div className="mt-4 border-t border-[#e4e7ed] pt-3">
                   {history[application.applicationId].map((item) => (

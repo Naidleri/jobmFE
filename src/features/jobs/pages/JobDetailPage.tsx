@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button, ModalNotAuth } from '../../../components'
-import { getJobById } from '../services/jobs.service'
+import { Button, ModalNotAuth, showToast } from '../../../components'
+import ApplyModal from '../components/ApplyModal'
+import { applyJob, getJobById } from '../services/jobs.service'
 import type { JobDetail } from '../types/job'
 import { formatDate } from '../../../utils/date'
 
@@ -12,9 +13,16 @@ function JobDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showApplyModal, setShowApplyModal] = useState(false)
+  const [applying, setApplying] = useState(false)
+  const [hasApplied, setHasApplied] = useState(false)
   const requestedJobId = jobId ?? ''
+  const isClosed = job?.status !== 'OPEN'
+  const isApplyDisabled = hasApplied || isClosed
 
   function handleApply() {
+    if (isApplyDisabled) return
+
     const token = localStorage.getItem('access_token')
 
     if (!token) {
@@ -22,6 +30,29 @@ function JobDetailPage() {
       return
     }
 
+    if (hasApplied) return
+    setShowApplyModal(true)
+  }
+
+  async function submitApplication(coverLetter: string) {
+    if (!requestedJobId) return
+    setApplying(true)
+
+    try {
+      await applyJob(requestedJobId, coverLetter)
+      setHasApplied(true)
+      setShowApplyModal(false)
+      showToast('success', 'Lamaran berhasil dikirim.')
+    } catch (requestError) {
+      showToast(
+        'error',
+        requestError instanceof Error
+          ? requestError.message
+          : 'Gagal mengirim lamaran',
+      )
+    } finally {
+      setApplying(false)
+    }
   }
 
   useEffect(() => {
@@ -32,7 +63,10 @@ function JobDetailPage() {
     async function loadJob() {
       try {
         const result = await getJobById(requestedJobId)
-        if (active) setJob(result)
+        if (active) {
+          setJob(result)
+          setHasApplied(result.hasApplied)
+        }
       } catch (requestError) {
         if (active) {
           setError(
@@ -76,8 +110,9 @@ function JobDetailPage() {
           variant="primary"
           className="max-sm:w-full"
           onClick={handleApply}
+          disabled={isApplyDisabled}
         >
-          Apply
+          {hasApplied ? 'Applied' : isClosed ? 'Closed' : 'Apply'}
         </Button.Root>
       </div>
 
@@ -104,6 +139,13 @@ function JobDetailPage() {
       </div>
       {showLoginModal && (
         <ModalNotAuth onClose={() => setShowLoginModal(false)} />
+      )}
+      {showApplyModal && (
+        <ApplyModal
+          loading={applying}
+          onClose={() => setShowApplyModal(false)}
+          onSubmit={submitApplication}
+        />
       )}
     </section>
   )

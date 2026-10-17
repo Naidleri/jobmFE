@@ -67,3 +67,34 @@ export async function getJobById(jobId: string): Promise<JobDetail> {
 
   return body as JobDetail
 }
+
+export async function applyJob(jobId: string, coverLetter: string) {
+  if (!coverLetter.trim()) {
+    throw new Error('Cover letter wajib diisi')
+  }
+
+  const token = localStorage.getItem('access_token')
+  const response = await fetch(buildApiUrl(`/jobs/${jobId}/applications`), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ coverLetter }),
+  })
+  const body = await response.json()
+
+  if (response.status === 401) {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('user')
+    window.dispatchEvent(new Event('auth-changed'))
+    window.location.href = '/login'
+    throw new Error('Sesi telah berakhir. Silakan login kembali.')
+  }
+
+  if (!response.ok) {
+    throw new Error(getErrorMessage(body.message || 'Gagal mengirim lamaran'))
+  }
+
+  return body
+}
