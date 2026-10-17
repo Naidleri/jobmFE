@@ -44,3 +44,29 @@
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
 }
+
+.error-boundary {
+  display: grid;
+  min-height: 100%;
+  place-content: center;
+  justify-items: center;
+  padding: 32px;
+  color: #15213f;
+  text-align: center;
+}
+
+.error-boundary p {
+  color: #66718a;
+}
+
+.error-boundary button {
+  min-height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 10px;
+  background: #101c40;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
