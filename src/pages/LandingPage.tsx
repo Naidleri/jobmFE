@@ -5,7 +5,7 @@ import { JobsProvider } from '../features/jobs/context/JobsContext'
 import { useJobs } from '../features/jobs/context/useJobs'
 import { useDebounce } from '../hooks/useDebounce'
 
-function JobsContent() {
+export function JobsContent() {
   const { jobs, filters, loading, error, setFilters } = useJobs()
   const [keyword, setKeyword] = useState(filters.keyword)
   const debouncedKeyword = useDebounce(keyword)

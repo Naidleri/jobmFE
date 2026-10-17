@@ -41,13 +41,16 @@ function MyProfilePage() {
 
   async function toggleHistory(applicationId: string) {
     if (history[applicationId]) {
-      setHistory({ ...history, [applicationId]: [] })
+      setHistory((currentHistory) => ({ ...currentHistory, [applicationId]: [] }))
       return
     }
 
     try {
       const result = await getApplicationHistory(applicationId)
-      setHistory({ ...history, [applicationId]: result })
+      setHistory((currentHistory) => ({
+        ...currentHistory,
+        [applicationId]: result,
+      }))
     } catch (requestError) {
       showToast(
         'error',
@@ -59,16 +62,12 @@ function MyProfilePage() {
   }
 
   if (!user) return <p role="alert">Silakan login terlebih dahulu.</p>
-  if (user.role !== 'JOB_SEEKER') {
-    return <p role="alert">Halaman ini khusus untuk Job Seeker.</p>
-  }
-
   return (
     <section className="mx-auto max-w-[1000px]">
       <div className="flex items-start justify-between gap-4 max-sm:flex-col">
         <div>
           <p className="mb-1 text-sm font-bold uppercase tracking-wide text-[#66718a]">
-            My Profile
+            {user.role === 'COMPANY' ? 'Company Profile' : 'My Profile'}
           </p>
           <h1 className="m-0 text-2xl font-bold text-[#15213f]">{user.name}</h1>
         </div>
@@ -76,12 +75,14 @@ function MyProfilePage() {
       </div>
 
       <div className="mt-6 grid gap-3 rounded-2xl border border-[#e4e7ed] bg-white p-6">
-        <h2 className="m-0 text-lg text-[#15213f]">Account</h2>
+        <h2 className="m-0 text-lg text-[#15213f]">
+          {user.role === 'COMPANY' ? 'Company Account' : 'Account'}
+        </h2>
         <p className="m-0 text-[#45516c]"><strong>Name:</strong> {user.name}</p>
         <p className="m-0 text-[#45516c]"><strong>Role:</strong> {readableRole(user.role)}</p>
       </div>
 
-      <div className="mt-6">
+      {user.role === 'JOB_SEEKER' && <div className="mt-6">
         <h2 className="text-xl font-bold text-[#15213f]">Application History</h2>
         {loading && <p className="text-[#66718a]">Loading applications...</p>}
         {!loading && applications.length === 0 && (
@@ -105,6 +106,12 @@ function MyProfilePage() {
                   {application.status}
                 </span>
               </div>
+              <Button.Root
+                variant="ghost"
+                onClick={() => void toggleHistory(application.applicationId)}
+              >
+                {history[application.applicationId] ? 'Hide history' : 'View history'}
+              </Button.Root>
               {history[application.applicationId] && (
                 <div className="mt-4 border-t border-[#e4e7ed] pt-3">
                   {history[application.applicationId].map((item) => (
@@ -118,7 +125,7 @@ function MyProfilePage() {
             </article>
           ))}
         </div>
-      </div>
+      </div>}
     </section>
   )
 }

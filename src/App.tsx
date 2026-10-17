@@ -7,6 +7,15 @@ import JobDetailPage from './features/jobs/pages/JobDetailPage'
 import LoginPage from './features/auth/pages/LoginPage'
 import RegisterPage from './features/auth/pages/RegisterPage'
 import MyProfilePage from './pages/MyProfilePage'
+import CompanyLandingPage from './pages/CompanyLandingPage'
+import CompanyCreateJobPage from './pages/CompanyCreateJobPage'
+import CompanyApplicantsPage from './pages/CompanyApplicantsPage'
+import { useAuth } from './hooks/useAuth'
+
+function HomePage() {
+  const { user } = useAuth()
+  return user?.role === 'COMPANY' ? <CompanyLandingPage /> : <LandingPage />
+}
 
 function App() {
   const [toast, setToast] = useState<ToastEventDetail | null>(null)
@@ -34,7 +43,9 @@ function App() {
       <Sidebar />
       <main className="min-w-0 flex-1 p-5 sm:p-8">
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/company/jobs/create" element={<CompanyCreateJobPage />} />
+          <Route path="/company/jobs/:jobId/applicants" element={<CompanyApplicantsPage />} />
           <Route path="/jobs/:jobId" element={<JobDetailPage />} />
           <Route path="/profile" element={<MyProfilePage />} />
           <Route path="/login" element={<LoginPage />} />

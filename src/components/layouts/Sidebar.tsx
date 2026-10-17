@@ -18,6 +18,14 @@ function ProfileIcon() {
     )
 }
 
+function CreateIcon() {
+    return (
+        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[21px] w-[21px] shrink-0 fill-none stroke-current stroke-[1.8]">
+            <path d="M12 5v14M5 12h14" />
+        </svg>
+    )
+}
+
 export default function Sidebar() {
     const navigate = useNavigate()
     const { user } = useAuth()
@@ -50,7 +58,7 @@ export default function Sidebar() {
             type="button"
             className="flex min-h-[72px] w-full items-center gap-3.5 rounded-[21px] border border-[#dfe2e8] bg-white px-[15px] py-2.5 text-left transition hover:border-[#15213f]"
             onClick={() => {
-                if (isGuest) navigate('/login')
+                navigate(isGuest ? '/login' : '/profile')
             }}
         >
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#15213f] text-xs font-bold text-white" aria-hidden="true">
@@ -71,17 +79,40 @@ export default function Sidebar() {
                 }
                 >
                 <HomeIcon />
-                <span>Home</span>
+                <span>{user?.role === 'COMPANY' ? 'My Job' : 'Home'}</span>
             </NavLink>
+            {user?.role === 'COMPANY' ? (
+                <>
+                    <NavLink
+                        to="/company/jobs/create"
+                        className={({ isActive }) =>
+                            `flex min-h-[51px] items-center gap-4 rounded-[25px] px-4 text-lg font-medium text-[#45516c] no-underline transition hover:bg-[#e6ebf5] hover:text-[#15213f] ${isActive ? 'bg-[#e6ebf5] font-bold text-[#15213f]' : ''}`
+                        }
+                    >
+                        <CreateIcon />
+                        <span>Create Job</span>
+                    </NavLink>
+                    <NavLink
+                        to="/profile"
+                        className={({ isActive }) =>
+                            `flex min-h-[51px] items-center gap-4 rounded-[25px] px-4 text-lg font-medium text-[#45516c] no-underline transition hover:bg-[#e6ebf5] hover:text-[#15213f] ${isActive ? 'bg-[#e6ebf5] font-bold text-[#15213f]' : ''}`
+                        }
+                    >
+                        <ProfileIcon />
+                        <span>My Profile</span>
+                    </NavLink>
+                </>
+            ) : (
                 <NavLink
-                to="/profile"
-                className={({ isActive }) =>
-                    `flex min-h-[51px] items-center gap-4 rounded-[25px] px-4 text-lg font-medium text-[#45516c] no-underline transition hover:bg-[#e6ebf5] hover:text-[#15213f] ${isActive ? 'bg-[#e6ebf5] font-bold text-[#15213f]' : ''}`
-                }
+                    to="/profile"
+                    className={({ isActive }) =>
+                        `flex min-h-[51px] items-center gap-4 rounded-[25px] px-4 text-lg font-medium text-[#45516c] no-underline transition hover:bg-[#e6ebf5] hover:text-[#15213f] ${isActive ? 'bg-[#e6ebf5] font-bold text-[#15213f]' : ''}`
+                    }
                 >
-                <ProfileIcon />
-                <span>My Profile</span>
-            </NavLink>
+                    <ProfileIcon />
+                    <span>My Profile</span>
+                </NavLink>
+            )}
         </nav>
     </aside>
 )}
