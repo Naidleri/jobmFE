@@ -27,7 +27,7 @@ export async function getJobs(
   if (filters.location) params.set('location', filters.location)
   if (filters.jobType) params.set('jobType', filters.jobType)
 
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('access_token')
   const response = await fetch(`${buildApiUrl('/jobs')}?${params.toString()}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   })
@@ -49,7 +49,7 @@ export async function getJobs(
 }
 
 export async function getJobById(jobId: string): Promise<JobDetail> {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('access_token')
   const response = await fetch(buildApiUrl(`/jobs/${jobId}`), {
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   })

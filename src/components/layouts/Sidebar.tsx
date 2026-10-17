@@ -1,4 +1,19 @@
-import { NavLink } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import type { AuthUser } from '../../features/auth/types/auth'
+
+function getStoredUser() {
+    const token = localStorage.getItem('access_token')
+    const savedUser = localStorage.getItem('user')
+
+    if (!token || !savedUser) return null
+
+    try {
+        return JSON.parse(savedUser) as AuthUser
+    } catch {
+        return null
+    }
+}
 
 function HomeIcon() {
     return (
@@ -17,15 +32,41 @@ function ProfileIcon() {
     )
 }
 
-function PlusIcon() {
-    return (
-        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-2">
-            <path d="M12 5v14M5 12h14" />
-        </svg>
-    )
-}
-
 export default function Sidebar() {
+    const navigate = useNavigate()
+    const [user, setUser] = useState<AuthUser | null>(getStoredUser)
+
+    useEffect(() => {
+        function updateUser() {
+            setUser(getStoredUser())
+        }
+
+        window.addEventListener('auth-changed', updateUser)
+        window.addEventListener('storage', updateUser)
+
+        return () => {
+            window.removeEventListener('auth-changed', updateUser)
+            window.removeEventListener('storage', updateUser)
+        }
+    }, [])
+
+    const isGuest = !user
+    const displayName = user?.name ?? 'Guest'
+    const displayRole = user?.role === 'COMPANY'
+        ? 'Company workspace'
+        : user
+            ? 'Job seeker workspace'
+            : 'Guest workspace'
+    const initials = user
+        ? user.name
+            .split(' ')
+            .filter((word) => word.length > 0)
+            .slice(0, 2)
+            .map((word) => word[0])
+            .join('')
+            .toUpperCase()
+        : 'G'
+
     return (
     <aside className="min-h-screen w-[260px] shrink-0 bg-[#f4f5f7] p-[18px_15px] text-[#15213f] sm:w-[336px]">
         <div className="relative mb-[18px] ml-0.5 w-max text-[25px] font-extrabold leading-none tracking-[-1.4px]" aria-label="Indokerja.id">
@@ -33,19 +74,20 @@ export default function Sidebar() {
             <small className="mt-[3px] block text-center text-[8px] font-bold tracking-normal">Gerbang Karier Indonesia</small>
         </div>
 
-        <div className="flex min-h-[72px] items-center gap-3.5 rounded-[21px] border border-[#dfe2e8] bg-white px-[15px] py-2.5">
+        <button
+            type="button"
+            className="flex min-h-[72px] w-full items-center gap-3.5 rounded-[21px] border border-[#dfe2e8] bg-white px-[15px] py-2.5 text-left transition hover:border-[#15213f]"
+            onClick={() => {
+                if (isGuest) navigate('/login')
+            }}
+        >
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#15213f] text-xs font-bold text-white" aria-hidden="true">
-                HA
+                {initials}
             </div>
             <div>
-                <span className="block text-sm text-[#5b6680]">Personal workspace</span>
-                <strong className="mt-0.5 block text-[17px]">Haris Ardiansyah</strong>
+                <span className="block text-sm text-[#5b6680]">{displayRole}</span>
+                <strong className="mt-0.5 block text-[17px]">{displayName}</strong>
             </div>
-        </div>
-
-        <button type="button" className="my-[15px] flex h-[50px] w-full items-center justify-center gap-3 rounded-[28px] border-0 bg-[#101c40] text-lg font-bold text-white transition hover:bg-[#1b2a57]">
-            <PlusIcon />
-            <span>Create</span>
         </button>
 
         <nav className="grid gap-[3px]" aria-label="Main navigation">

@@ -4,6 +4,7 @@ type ButtonRootProps = PropsWithChildren<{
   variant?: 'primary' | 'secondary' | 'ghost'
   className?: string
   onClick?: MouseEventHandler<HTMLButtonElement>
+  type?: 'button' | 'submit'
 }>
 
 function Root({
@@ -11,6 +12,7 @@ function Root({
   className = '',
   variant = 'primary',
   onClick,
+  type = 'button',
 }: ButtonRootProps) {
   return (
     <button
@@ -21,6 +23,7 @@ function Root({
             ? 'border border-[#dfe2e8] bg-white text-[#15213f]'
             : 'bg-transparent text-[#45516c]'
       } ${className}`.trim()}
+      type={type}
       onClick={onClick}
     >
       {children}

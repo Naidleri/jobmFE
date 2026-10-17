@@ -1,4 +1,5 @@
 import { Button } from './Button'
+import { useNavigate } from 'react-router-dom'
 
 type ModalNotAuthProps = {
   onClose: () => void
@@ -9,6 +10,17 @@ export default function ModalNotAuth({
   onClose,
   onLogin = onClose,
 }: ModalNotAuthProps) {
+  const navigate = useNavigate()
+
+  function goToLogin() {
+    onClose()
+    if (onLogin === onClose) {
+      navigate('/login')
+      return
+    }
+    onLogin()
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-5"
@@ -35,7 +47,7 @@ export default function ModalNotAuth({
           <Button.Root variant="ghost" onClick={onClose}>
             Nanti
           </Button.Root>
-          <Button.Root variant="primary" onClick={onLogin}>
+          <Button.Root variant="primary" onClick={goToLogin}>
             Login
           </Button.Root>
         </div>
