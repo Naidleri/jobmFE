@@ -17,6 +17,7 @@ function MyProfilePage() {
   const { user, logout } = useAuth()
   const [applications, setApplications] = useState<Application[]>([])
   const [history, setHistory] = useState<Record<string, ApplicationHistory[]>>({})
+  const [expandedHistory, setExpandedHistory] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(user?.role === 'JOB_SEEKER')
 
   useEffect(() => {
@@ -40,8 +41,19 @@ function MyProfilePage() {
   }, [user])
 
   async function toggleHistory(applicationId: string) {
+    if (expandedHistory[applicationId]) {
+      setExpandedHistory((currentExpanded) => ({
+        ...currentExpanded,
+        [applicationId]: false,
+      }))
+      return
+    }
+
     if (history[applicationId]) {
-      setHistory((currentHistory) => ({ ...currentHistory, [applicationId]: [] }))
+      setExpandedHistory((currentExpanded) => ({
+        ...currentExpanded,
+        [applicationId]: true,
+      }))
       return
     }
 
@@ -50,6 +62,10 @@ function MyProfilePage() {
       setHistory((currentHistory) => ({
         ...currentHistory,
         [applicationId]: result,
+      }))
+      setExpandedHistory((currentExpanded) => ({
+        ...currentExpanded,
+        [applicationId]: true,
       }))
     } catch (requestError) {
       showToast(
@@ -110,9 +126,9 @@ function MyProfilePage() {
                 variant="ghost"
                 onClick={() => void toggleHistory(application.applicationId)}
               >
-                {history[application.applicationId] ? 'Hide history' : 'View history'}
+                {expandedHistory[application.applicationId] ? 'Hide history' : 'View history'}
               </Button.Root>
-              {history[application.applicationId] && (
+              {expandedHistory[application.applicationId] && (
                 <div className="mt-4 border-t border-[#e4e7ed] pt-3">
                   {history[application.applicationId].map((item) => (
                     <p key={item.id} className="m-0 py-1 text-sm text-[#45516c]">
