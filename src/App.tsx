@@ -41,7 +41,7 @@ function App() {
         />
       )}
       <Sidebar />
-      <main className="min-w-0 flex-1 p-5 sm:p-8">
+      <main className="min-w-0 flex-1 px-3 pb-5 pt-20 sm:p-8">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/company/jobs/create" element={<CompanyCreateJobPage />} />

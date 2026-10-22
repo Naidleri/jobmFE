@@ -70,7 +70,7 @@ function CompanyCreateJobPage() {
         <textarea className="min-h-24 rounded-lg border p-3" placeholder="Description" value={description} onChange={(event) => setDescription(event.target.value)} required />
         <textarea className="min-h-20 rounded-lg border p-3" placeholder="Requirements, satu per baris" value={requirements} onChange={(event) => setRequirements(event.target.value)} required />
         <input className="min-h-11 rounded-lg border p-3" placeholder="Location" value={location} onChange={(event) => setLocation(event.target.value)} required />
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
           <input className="min-h-11 rounded-lg border p-3" type="number" placeholder="Salary min" value={salaryMin} onChange={(event) => setSalaryMin(event.target.value)} required />
           <input className="min-h-11 rounded-lg border p-3" type="number" placeholder="Salary max" value={salaryMax} onChange={(event) => setSalaryMax(event.target.value)} required />
         </div>

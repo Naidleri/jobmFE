@@ -30,7 +30,7 @@ function JobCard({ job }: JobCardProps) {
   }
 
 return (
-  <article className="flex cursor-pointer items-start justify-start gap-5 rounded-[18px] border border-[#e4e7ed] bg-white p-[22px]" onClick={openDetail}>
+  <article className="flex cursor-pointer items-start justify-start gap-5 rounded-[18px] border border-[#e4e7ed] bg-white p-[22px] max-sm:flex-col" onClick={openDetail}>
     <div className="grid h-14 w-14 shrink-0 place-items-center rounded-[14px] bg-[#15213f] text-base font-extrabold text-white" aria-label={job.company}>
       {getCompanyInitials(job.company)}
     </div>
@@ -49,6 +49,7 @@ return (
     </div>
     <Button.Root
       variant="secondary"
+      className="shrink-0 max-sm:w-full"
       onClick={openDetailFromButton}
     >
       View & Apply
